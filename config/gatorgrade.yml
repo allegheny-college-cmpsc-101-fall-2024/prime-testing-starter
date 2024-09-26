@@ -1,0 +1,170 @@
+setup: |
+  cd primality && poetry install
+  echo "Done installing project dependencies!"
+---
+
+# Reminder for ^^^:
+# All commands executed in the setup block are done in a
+# one-by-one fashion from the current working directory. This means
+# that there is no history associated with running the commands and
+# thus multiple commands must be run in a single chain.
+
+- primality/primality/main.py:
+    - description: Ensure that the main.py file exists in the primality/primality/ directory
+      check: ConfirmFileExists
+    - description: Complete all TODOs, remove the TODO markers, and rewrite comments for main.py
+      check: MatchFileFragment
+      options:
+        fragment: TODO
+        count: 0
+        exact: true
+    - description: Create a sufficient number of docstring (i.e., multiple-line) comments in main.py
+      check: CountMultipleLineComments
+      options:
+        language: "Python"
+        count: 7
+        exact: false
+    - description: Create a sufficient number of single-line comments in main.py
+      check: CountSingleLineComments
+      options:
+        language: "Python"
+        count: 25
+        exact: false
+
+# perform checks on a file
+- primality/tests/test_primality.py:
+    - description: Ensure that the test_primality.py file exists in the primality/tests/ directory
+      check: ConfirmFileExists
+    - description: Complete all TODOs, remove the TODO markers, and rewrite comments for test_primality.py
+      check: MatchFileFragment
+      options:
+        fragment: TODO
+        count: 0
+        exact: true
+    - description: Confirm that the test_primality.py file contains the required number of test cases
+      check: MatchFileFragment
+      options:
+        fragment: test_
+        count: 9
+        exact: true
+    - description: Create a sufficient number of docstring (i.e., multiple-line) comments in test_primality.py
+      check: CountMultipleLineComments
+      options:
+        language: "Python"
+        count: 6
+        exact: false
+    - description: Create a sufficient number of single-line comments in test_primality.py
+      check: CountSingleLineComments
+      options:
+        language: "Python"
+        count: 4
+        exact: false
+
+# perform checks on a file
+- writing/reflection.md:
+    - description: Ensure that the reflection.md file exists in the writing/ directory
+      check: ConfirmFileExists
+    - description: Complete all TODOs, remove the TODO markers, and rewrite comments for the reflection
+      check: MatchFileFragment
+      options:
+        fragment: TODO
+        count: 0
+        exact: true
+    - description: Delete the 'Add Your Name Here' prompt in the reflection file
+      check: MatchFileFragment
+      options:
+        fragment: "Add Your Name Here"
+        count: 0
+        exact: true
+    - description: Write a minimum number of meaningful words in the reflection
+      check: CountFileWords
+      options:
+        count: 300
+        exact: false
+    - description: Confirm that the markdown file has the correct number of headers
+      check: CountMarkdownTags
+      options:
+        tag: heading
+        count: 13
+        exact: false
+    - description: Confirm that the markdown file has the correct number of fenced code blocks
+      check: CountMarkdownTags
+      options:
+        tag: code_block
+        count: 8
+        exact: false
+
+# run the program and confirm correct number of lines in the output
+- description: Run the program and confirm the correct number of non-blank lines in the output
+  check: CountCommandOutput
+  options:
+    command: 'cd primality && poetry run primality --number 49979687 --approach efficient --profile'
+    count: 4
+    exact: false
+
+# run the program and confirm the existence of fragments in its output
+- description: Run the program and confirm the existence of a fragment in the output
+  check: MatchCommandFragment
+  options:
+    command: 'cd primality && poetry run primality --number 49979687 --approach efficient --profile'
+    fragment: 49979687
+    count: 1
+    exact: false
+
+# run the program and confirm the existence of fragments in its output
+- description: Run the program and confirm the existence of a fragment in the output
+  check: MatchCommandFragment
+  options:
+    command: 'cd primality && poetry run primality --number 49979687 --approach efficient --profile'
+    fragment: "Attempting to determine"
+    count: 1
+    exact: false
+
+# run the program and confirm the existence of fragments in its output
+- description: Run the program and confirm the existence of a fragment in the output
+  check: MatchCommandFragment
+  options:
+    command: 'cd primality && poetry run primality --number 49979687 --approach efficient --profile'
+    fragment: What divisors were found
+    count: 1
+    exact: false
+
+# run the program and confirm the existence of fragments in its output
+- description: Run the program and confirm the existence of a fragment in the output
+  check: MatchCommandFragment
+  options:
+    command: 'cd primality && poetry run primality --number 49979687 --approach efficient --profile'
+    fragment: Was this a prime number? Yes
+    count: 1
+    exact: false
+
+# run the program and confirm the existence of fragments in its output
+- description: Run the program and confirm the existence of a fragment in the output
+  check: MatchCommandFragment
+  options:
+    command: 'cd primality && poetry run primality --number 49979687 --approach efficient --profile'
+    fragment: primality_test_efficient
+    count: 1
+    exact: false
+
+# run a command
+- description: Pass the source code linting and formatting checks run by ruff
+  command: cd primality && poetry run task ruff
+
+# run a command
+- description: Pass the linting checks run by mypy
+  command: cd primality && poetry run task mypy
+
+# run a command
+- description: Pass the linting checks run by pymarkdown
+  command: cd primality && poetry run task markdownlint
+
+# run a command
+- description: Pass all of the Pytest test cases
+  command: cd primality && poetry run task test
+
+# count number of commits in the GitHub repository
+- description: Have at least a specific minimum of commits in repository
+  check: CountCommits
+  options:
+    count: 10
